@@ -6,7 +6,7 @@ source.dir = .
 source.include_exts = py,html,css,js
 source.include_patterns = templates/*
 version = 1.0
-requirements = python3,kivy,flask
+requirements = python3,kivy,flask,android
 orientation = portrait
 fullscreen = 1
 android.permissions = INTERNET
@@ -19,3 +19,4 @@ android.accept_sdk_license = True
 [buildozer]
 log_level = 2
 warn_on_root = 1
+
