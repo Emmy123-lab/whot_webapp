@@ -14,3 +14,6 @@ android.api = 33
 android.minapi = 21
 android.ndk_api = 21
 
+[buildozer]
+log_level = 2
+warn_on_root = 1
