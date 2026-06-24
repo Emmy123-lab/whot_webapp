@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Whot! Mobile Pro</title>
+    <style>
+        :root {
+            --circle-color: #ffcc00;
+            --triangle-color: #00ccff;
+            --cross-color: #00cc44;
+            --square-color: #ff00ff;
+            --star-color: #ff9900;
+            --whot-color: #ff3333;
+        }
+        body { 
+            background: #0b1a10; 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(180deg, #163d22, #0b1a10);
+            padding: 15px 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        h1 { margin: 0; font-size: 24px; color: #ffcc00; text-shadow: 2px 2px #000; text-align: center; }
+        
+        #status-banner {
+            background: #ffcc00; color: #000; font-weight: bold;
+            padding: 10px; margin: 10px auto; width: 90%; text-align: center;
+            border-radius: 20px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+            font-size: 14px; text-transform: uppercase;
+        }
+
+        .game-container { display: flex; flex-direction: column; align-items: center; padding: 10px; }
+        .table-felt { 
+            background: radial-gradient(circle, #1a5c32 0%, #0d331b 100%); 
+            border-radius: 24px; width: 95%; max-width: 500px;
+            padding: 20px 10px; box-sizing: border-box;
+            border: 4px solid #082111; box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            margin-bottom: 15px; text-align: center;
+        }
+
+        .stats-row {
+            display: flex; justify-content: space-around; font-weight: bold;
+            font-size: 14px; background: rgba(0,0,0,0.3); padding: 8px;
+            border-radius: 10px; margin-bottom: 15px;
+        }
+
+        .card { 
+            display: inline-block; width: 85px; height: 125px; 
+            background: #fcfcfc; border-radius: 12px; color: black; 
+            margin: 6px; padding: 8px; box-sizing: border-box; 
+            position: relative; box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 0 8px rgba(0,0,0,0.1); 
+            transition: transform 0.2s; touch-action: manipulation;
+        }
+        .card:active { transform: scale(0.92); }
+        
+        .card-num-top { position: absolute; top: 6px; left: 8px; font-size: 16px; font-weight: 900; }
+        .card-num-bottom { position: absolute; bottom: 6px; right: 8px; font-size: 16px; font-weight: 900; transform: rotate(180deg); }
+        
+        .card-center { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+
+        .Circle { border: 4px solid var(--circle-color); color: var(--circle-color); }
+        .Triangle { border: 4px solid var(--triangle-color); color: var(--triangle-color); }
+        .Cross { border: 4px solid var(--cross-color); color: var(--cross-color); }
+        .Square { border: 4px solid var(--square-color); color: var(--square-color); }
+        .Star { border: 4px solid var(--star-color); color: var(--star-color); }
+        .WHOT { border: 4px solid var(--whot-color); background: linear-gradient(135deg, #fff 0%, #ffe6e6 100%); color: var(--whot-color); }
+
+        .action-bar { margin: 10px 0; display: flex; gap: 10px; }
+        .btn { 
+            background: linear-gradient(180deg, #ffcc00, #d4aa00); color: #111; 
+            border: none; padding: 12px 20px; font-size: 15px; font-weight: bold; 
+            border-radius: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: pointer;
+        }
+        .btn-market { background: linear-gradient(180deg, #00ccff, #0099cc); color: white; }
+        .btn:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+
+        #player-hand-container { width: 100%; background: rgba(255,255,255,0.05); padding: 15px 5px; border-radius: 20px 20px 0 0; }
+        #hand { display: flex; overflow-x: auto; padding: 10px; justify-content: flex-start; scrollbar-width: none; }
+        #hand::-webkit-scrollbar { display: none; }
+        .disabled-hand { pointer-events: none; opacity: 0.6; }
+        h3 { margin: 5px 0; font-size: 16px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; text-align: center;}
+
+        #whot-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .modal-content { background: #163d22; padding: 25px; border-radius: 20px; border: 3px solid #ffcc00; text-align: center; width: 85%; max-width: 350px; }
+        .shape-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .shape-btn { background: white; color: black; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 10px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇳🇬 WHOT! MOBILE PRO</h1>
+    </header>
+    
+    <div id="status-banner">TAP "START NEW GAME" TO DISTRIBUTE CARDS!</div>
+    
+    <div class="game-container">
+        <div class="table-felt">
+            <div class="stats-row">
+                <span>🤖 AI HAND: <span id="ai-count" style="color:#ff3333">0</span></span>
+                <span>🎴 MARKET: <span id="market-count" style="color:#00ccff">0</span></span>
+            </div>
+            <h3>Active Discard Pile</h3>
+            <div id="top-card" style="margin: 15px 0;">
+                <div class="card WHOT"><div class="card-center">🇳🇬</div></div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button id="btn-start" class="btn" onclick="startGame()">Start New Game</button>
+            <button id="btn-market" class="btn btn-market" onclick="drawMarket()" disabled>Go To Market</button>
+        </div>
+
+        <div id="player-hand-container">
+            <h3>Your Hand (Swipe horizontally)</h3>
+            <div id="hand"></div>
+        </div>
+    </div>
+
+    <div id="whot-modal">
+        <div class="modal-content">
+            <h2 style="color: #ffcc00; margin: 0;">💥 WHOT 20!</h2>
+            <p>Select the shape you want to request:</p>
+            <div class="shape-options">
+                <button class="shape-btn" style="color:var(--circle-color)" onclick="submitWhotPlay('Circle')">● Circle</button>
+                <button class="shape-btn" style="color:var(--triangle-color)" onclick="submitWhotPlay('Triangle')">▲ Triangle</button>
+                <button class="shape-btn" style="color:var(--cross-color)" onclick="submitWhotPlay('Cross')">✚ Cross</button>
+                <button class="shape-btn" style="color:var(--square-color)" onclick="submitWhotPlay('Square')">■ Square</button>
+                <button class="shape-btn" style="color:var(--star-color)" onclick="submitWhotPlay('Star')">★ Star</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SHAPE_SYMBOLS = { "Circle": "●", "Triangle": "▲", "Cross": "✚", "Square": "■", "Star": "★", "WHOT": "WHOT" };
+        let localHand = [];
+        let pendingCardIndex = null;
+
+        function setControls(enabled) {
+            document.getElementById('btn-market').disabled = !enabled;
+            const handElement = document.getElementById('hand');
+            if (enabled) {
+                handElement.classList.remove('disabled-hand');
+            } else {
+                handElement.classList.add('disabled-hand');
+            }
+        }
+
+        function updateUI(data) {
+            document.getElementById('status-banner').innerText = data.message;
+            document.getElementById('ai-count').innerText = data.ai_hand_size;
+            document.getElementById('market-count').innerText = data.market_size;
+            
+            const topDiv = document.getElementById('top-card');
+            const topSymbol = SHAPE_SYMBOLS[data.top_card.shape];
+            topDiv.innerHTML = `
+                <div class="card ${data.top_card.shape}">
+                    <div class="card-num-top">${data.top_card.number}</div>
+                    <div class="card-center">${topSymbol}</div>
+                    <div class="card-num-bottom">${data.top_card.number}</div>
+                </div>`;
+            
+            localHand = data.player_hand;
+            const handDiv = document.getElementById('hand');
+            handDiv.innerHTML = '';
+            localHand.forEach((card, index) => {
+                handDiv.innerHTML += `
+                    <div class="card ${card.shape}" onclick="handleCardClick(${index})">
+                        <div class="card-num-top">${card.number}</div>
+                        <div class="card-center">${SHAPE_SYMBOLS[card.shape]}</div>
+                        <div class="card-num-bottom">${card.number}</div>
+                    </div>`;
+            });
+        }
+
+        async function triggerAiTurn() {
+            setControls(false);
+            document.getElementById('status-banner').innerText = "🤖 AI IS THINKING...";
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const res = await fetch('/ai_move', { method: 'POST' });
+            const data = await res.json();
+            updateUI(data);
+            
+            // If AI plays a "HOLD ON", it stays in its turn cycle dynamically
+            if (data.message.includes("HOLD ON") && !data.message.includes("GAME OVER")) {
+                await triggerAiTurn();
+            } else if (!data.message.includes("GAME OVER")) {
+                setControls(true);
+            }
+        }
+
+        async function startGame() {
+            const res = await fetch('/start', { method: 'POST' });
+            const data = await res.json();
+            updateUI(data);
+            setControls(true);
+        }
+
+        function handleCardClick(index) {
+            const card = localHand[index];
+            if (card.shape === "WHOT") {
+                pendingCardIndex = index;
+                document.getElementById('whot-modal').style.display = 'flex';
+            } else {
+                executePlay(index, null);
+            }
+        }
+
+        function submitWhotPlay(shape) {
+            document.getElementById('whot-modal').style.display = 'none';
+            executePlay(pendingCardIndex, shape);
+        }
+
+        async function executePlay(index, reqShape) {
+            const res = await fetch('/play', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ index: index, requested_shape: reqShape })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                updateUI(data);
+                
+                // IF HOLD ON CAUGHT: Keep your controls active, skip calling AI turn completely!
+                if (data.message.includes("HOLD ON")) {
+                    setControls(true);
+                    return;
+                }
+                
+                if (!data.message.includes("🏆")) {
+                    await triggerAiTurn();
+                }
+            } else {
+                const err = await res.json();
+                alert(err.error);
+            }
+        }
+
+        async function drawMarket() {
+            const res = await fetch('/market', { method: 'POST' });
+            const data = await res.json();
+            updateUI(data);
+            
+            // If drawing a normal card, it's AI's turn. 
+            // If clearing a pending penalty, the penalty message clears and hands shift normally.
+            if (!data.message.includes("ACCEPTED PENALTY")) {
+                await triggerAiTurn();
+            } else {
+                await triggerAiTurn();
+            }
+        }
+    </script>
+</body>
+</html>
