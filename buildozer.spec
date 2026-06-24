@@ -6,13 +6,14 @@ source.dir = .
 source.include_exts = py,html,css,js
 source.include_patterns = templates/*
 version = 1.0
-requirements = python3,kivy,flask,click,itsdangerous,jinja2,werkzeug,pyjnius
+requirements = python3,kivy,flask,jinja2,werkzeug,click,itsdangerous
 orientation = portrait
 fullscreen = 1
 android.permissions = INTERNET
 android.api = 33
 android.minapi = 21
 android.ndk_api = 21
+android.accept_sdk_license = True
 
 [buildozer]
 log_level = 2
